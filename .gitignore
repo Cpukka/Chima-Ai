@@ -1,0 +1,99 @@
+# ===== Node =====
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+.npm/
+.yarn/
+.pnp.*
+package-lock.json
+.npmrc
+
+# ===== Build outputs =====
+dist/
+build/
+out/
+.next/
+.turbo/
+*.tsbuildinfo
+
+# ===== .NET =====
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vs/
+*.dll
+*.pdb
+*.cache
+
+# ===== Expo / React Native =====
+.expo/
+.expo-shared/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+web-build/
+android/
+ios/
+
+# ===== Environment / secrets =====
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+*.env
+!.env.example
+!.env.local.example
+
+# ===== Logs =====
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ===== OS =====
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===== IDE =====
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/tasks.json
+
+# ===== Testing =====
+coverage/
+.nyc_output/
+TestResults/
+
+# ===== Database =====
+*.sqlite
+*.db
+pgdata/
+
+# ===== Chima: file storage =====
+apps/api/storage/
+storage/
+
+# ===== Chima: user secrets (belt and braces) =====
+apps/api/src/Chima.Api/appsettings.Development.json
+apps/api/src/Chima.Api/appsettings.Production.json
+apps/api/src/Chima.Api/appsettings.Local.json
+
+# ===== Misc =====
+.cache/
+tmp/
+temp/
+*.tmp

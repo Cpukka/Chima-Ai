@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Chima.Api/Chima.Api.csproj" />
+    <Project Path="src/Chima.Application/Chima.Application.csproj" />
+    <Project Path="src/Chima.Domain/Chima.Domain.csproj" />
+    <Project Path="src/Chima.Infrastructure/Chima.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Chima.IntegrationTests/Chima.IntegrationTests.csproj" />
+    <Project Path="tests/Chima.UnitTests/Chima.UnitTests.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,18 @@
+﻿<Project>
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <InvariantGlobalization>false</InvariantGlobalization>
+    <UserSecretsId>chima-api-secrets</UserSecretsId>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Authors>Chima</Authors>
+    <Company>Chima</Company>
+    <Product>Chima AI Assistant</Product>
+    <Version>0.1.0</Version>
+  </PropertyGroup>
+</Project>
