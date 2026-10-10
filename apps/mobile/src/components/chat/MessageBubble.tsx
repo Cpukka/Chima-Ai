@@ -2,7 +2,15 @@ import { useState } from 'react';
 import { Alert, Pressable, StyleSheet, View } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 import * as Haptics from 'expo-haptics';
-import { Check, Copy, RefreshCw, AlertTriangle } from 'lucide-react-native';
+import * as Speech from 'expo-speech';
+import {
+  Check,
+  Copy,
+  RefreshCw,
+  AlertTriangle,
+  Volume2,
+  VolumeX
+} from 'lucide-react-native';
 import { useTheme } from '@/theme/ThemeProvider';
 import { Text } from '@/components/ui/Text';
 import { MarkdownRenderer } from './MarkdownRenderer';
@@ -17,6 +25,7 @@ interface Props {
 export function MessageBubble({ message, user, onRegenerate }: Props) {
   const { colors } = useTheme();
   const [copied, setCopied] = useState(false);
+  const [speaking, setSpeaking] = useState(false);
   const isUser = message.role === 'user';
   const isStreaming = message.status === 'streaming' || message.status === 'pending';
   const isFailed = message.status === 'failed';
@@ -28,6 +37,40 @@ export function MessageBubble({ message, user, onRegenerate }: Props) {
     setTimeout(() => setCopied(false), 1500);
   }
 
+  async function toggleSpeak() {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
+    if (speaking) {
+      Speech.stop();
+      setSpeaking(false);
+      return;
+    }
+
+    // Stop any existing speech, then read this message
+    Speech.stop();
+    setSpeaking(true);
+
+    // Strip markdown-ish markers for a cleaner read
+    const clean = message.content
+      .replace(/```[\s\S]*?```/g, ' code block ')
+      .replace(/`([^`]+)`/g, '$1')
+      .replace(/\*\*([^*]+)\*\*/g, '$1')
+      .replace(/\*([^*]+)\*/g, '$1')
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+      .replace(/^#+\s+/gm, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    Speech.speak(clean, {
+      onDone: () => setSpeaking(false),
+      onStopped: () => setSpeaking(false),
+      onError: () => {
+        setSpeaking(false);
+        Alert.alert('Speech failed', 'Could not read the message aloud.');
+      }
+    });
+  }
+
   return (
     <View
       style={[
@@ -36,13 +79,10 @@ export function MessageBubble({ message, user, onRegenerate }: Props) {
       ]}
     >
       <View style={styles.inner}>
-        {/* Avatar circle */}
         <View
           style={[
             styles.avatar,
-            {
-              backgroundColor: isUser ? colors.primary + '20' : colors.primary,
-            }
+            { backgroundColor: isUser ? colors.primary + '20' : colors.primary }
           ]}
         >
           <Text
@@ -52,9 +92,7 @@ export function MessageBubble({ message, user, onRegenerate }: Props) {
               fontWeight: '700'
             }}
           >
-            {isUser
-              ? (user?.displayName?.slice(0, 1).toUpperCase() || 'U')
-              : 'C'}
+            {isUser ? (user?.displayName?.slice(0, 1).toUpperCase() || 'U') : 'C'}
           </Text>
         </View>
 
@@ -88,13 +126,18 @@ export function MessageBubble({ message, user, onRegenerate }: Props) {
             <View
               style={[
                 styles.failBox,
-                { borderColor: colors.destructive + '60', backgroundColor: colors.destructive + '10' }
+                {
+                  borderColor: colors.destructive + '60',
+                  backgroundColor: colors.destructive + '10'
+                }
               ]}
             >
               <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 8 }}>
                 <AlertTriangle size={16} color={colors.destructive} />
                 <View style={{ flex: 1 }}>
-                  <Text style={{ color: colors.destructive, fontWeight: '600', fontSize: 13 }}>
+                  <Text
+                    style={{ color: colors.destructive, fontWeight: '600', fontSize: 13 }}
+                  >
                     Response failed
                   </Text>
                   <Text variant="caption" muted style={{ marginTop: 2 }}>
@@ -110,7 +153,13 @@ export function MessageBubble({ message, user, onRegenerate }: Props) {
                     { borderColor: colors.destructive, marginTop: 10 }
                   ]}
                 >
-                  <Text style={{ color: colors.destructive, fontSize: 13, fontWeight: '600' }}>
+                  <Text
+                    style={{
+                      color: colors.destructive,
+                      fontSize: 13,
+                      fontWeight: '600'
+                    }}
+                  >
                     Retry
                   </Text>
                 </Pressable>
@@ -130,6 +179,23 @@ export function MessageBubble({ message, user, onRegenerate }: Props) {
                   {copied ? 'Copied' : 'Copy'}
                 </Text>
               </Pressable>
+
+              {!isUser && (
+                <Pressable onPress={toggleSpeak} style={styles.actionBtn} hitSlop={6}>
+                  {speaking ? (
+                    <VolumeX size={12} color={colors.primary} />
+                  ) : (
+                    <Volume2 size={12} color={colors.textMuted} />
+                  )}
+                  <Text
+                    variant="caption"
+                    muted={!speaking}
+                    style={{ marginLeft: 4, color: speaking ? colors.primary : undefined }}
+                  >
+                    {speaking ? 'Stop' : 'Read'}
+                  </Text>
+                </Pressable>
+              )}
 
               {!isUser && onRegenerate && (
                 <Pressable
@@ -166,7 +232,7 @@ const styles = StyleSheet.create({
     marginTop: 2
   },
   header: { flexDirection: 'row', alignItems: 'center' },
-  actions: { flexDirection: 'row', gap: 12, marginTop: 10 },
+  actions: { flexDirection: 'row', gap: 12, marginTop: 10, flexWrap: 'wrap' },
   actionBtn: { flexDirection: 'row', alignItems: 'center' },
   failBox: { marginTop: 8, padding: 12, borderRadius: 10, borderWidth: 1 },
   retryBtn: {

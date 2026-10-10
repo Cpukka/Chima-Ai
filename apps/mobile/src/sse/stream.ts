@@ -13,7 +13,7 @@ export interface SseHandlers {
 
 export function streamMessage(
   url: string,
-  body: { content: string; modelId?: string },
+  body: { content: string; modelId?: string; attachmentIds?: string[] },
   token: string,
   handlers: SseHandlers
 ): AbortController {

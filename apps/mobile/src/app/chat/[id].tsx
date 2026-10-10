@@ -80,7 +80,7 @@ export default function ChatScreen() {
   }, []);
 
   const handleSend = useCallback(
-    async (content: string) => {
+    async (content: string, attachmentIds?: string[]) => {
       if (!content.trim() || streaming) return;
       const token = session.getAccess();
       if (!token) {
@@ -113,9 +113,7 @@ export default function ChatScreen() {
       setMessages((prev) => [...prev, optimistic]);
       setTimeout(scrollToEnd, 50);
 
-      const controller = streamMessage(
-        messagesApi.streamUrl(id),
-        { content },
+      const controller = streamMessage(messagesApi.streamUrl(id), { content, attachmentIds },
         token,
         {
           onMeta: () => {},
